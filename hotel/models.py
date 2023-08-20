@@ -1,6 +1,7 @@
-from enum import Enum
 
 from django.db import models
+
+from account.models import User
 
 
 # Create your models here.
@@ -8,14 +9,13 @@ from django.db import models
 class RoomStatus(models.TextChoices):
     APPROVED = "APPROVED",
     PENDING = "PENDING",
-    COMPLETED = "COMPLETED",
+    RESERVED = "RESERVED",
     CANCELLED = "CANCELLED"
 
 
 class Room(models.Model):
     bed_count = models.IntegerField()
-    is_empty = models.BooleanField(default=True)
-    status = models.CharField(max_length=10, choices=RoomStatus.choices)
+    status = models.CharField(max_length=10, choices=RoomStatus.choices, default=RoomStatus.PENDING)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -30,7 +30,7 @@ class Address(models.Model):
 
 
 class Reservation(models.Model):
-    name = models.CharField(max_length=300)
+    name = models.ForeignKey(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=16, unique=True)
     national_code = models.IntegerField(unique=True)
     price = models.IntegerField()
@@ -43,7 +43,7 @@ class Reservation(models.Model):
 
 
 class Hotel(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.SET_NULL)
+    room = models.ForeignKey(Room, on_delete=models.PROTECT)
     address = models.ForeignKey(Address, on_delete=models.PROTECT)
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     create_date = models.DateTimeField(auto_now_add=True, editable=False)
