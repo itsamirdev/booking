@@ -35,18 +35,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
-
     # external apps
     'rest_framework',
     'rest_framework.authtoken',
+    # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
     'dj_rest_auth',
-    'dj_rest_auth.registration',
-
+    # https://dj-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-
+    'dj_rest_auth.registration',
+    # https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation
+    'drf_spectacular',
+    # https://www.django-rest-framework.org/api-guide/filtering/#djangofilterbackend
+    'django_filters',
     # internal apps
     'accounts',
     'hotel.apps.HotelConfig',
@@ -115,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-AUTH_USER_MODEL = 'accounts.User'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -136,21 +138,52 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
+    # Permissions
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
+    # Jwt
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
+    # Pagination
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
+    # Swagger
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # Filtering | Search | Ordering
+    'DEFAULT_FILTER_BACKENDS': [
+        # for Filtering you should add filterset_fields = [] in views for defined witch field do you want to filter.
+        'django_filters.rest_framework.DjangoFilterBackend',
+        # for Search, you should add search_fields = [] in views for defined witch field do you want to search.
+        'rest_framework.filters.SearchFilter',
+        # for Ordering, you should add ordering_fields = [] in views for defined witch field do you want to order.
+        # or for set default ordering you can add ordering = ['username'].
+        'rest_framework.filters.OrderingFilter',
+
+    ],
 }
 
+# setting of Jwt.
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'hoopad-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'hoopad-refresh-token',
-    'JWT_AUTH_HTTPONLY': False
+    'JWT_AUTH_COOKIE': 'booking-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'booking-refresh-token',
+    # if refresh token doesn't work add this.
+    'JWT_AUTH_HTTPONLY': False,
 }
 
 SITE_ID = 1
+
+
+# setting of SPECTACULAR package for Swagger.
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'booking',
+    'DESCRIPTION': 'booking project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
+
+
+# for set custom model User in your project.
+AUTH_USER_MODEL = 'accounts.User'
