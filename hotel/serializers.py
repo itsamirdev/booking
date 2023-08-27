@@ -21,21 +21,20 @@ class ReservationSerializer(serializers.ModelSerializer):
 
 
 class HotelSerializer(serializers.ModelSerializer):
-    # nested serializer
-    address = AddressSerializer(read_only=True)
-    room = RoomSerializer(read_only=True)
-    reservation = ReservationSerializer(read_only=True)
-
     class Meta:
         model = Hotel
         fields = '__all__'
 
 
 class HotelListSerializer(serializers.ModelSerializer):
-    detail = serializers.HyperlinkedIdentityField(view_name='hotel-detail')
-    rooms = serializers.HyperlinkedIdentityField(many=True, view_name='rooms-detail')
+    # rooms = serializers.HyperlinkedIdentityField(many=True, view_name='rooms-detail')
 
     class Meta:
         model = Hotel
-        fields = ['hotel_name', 'is_active', 'create_date', 'detail', 'rooms']
+        fields = ['name', 'is_active', 'created_at']
 
+
+class HotelReservationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hotel
+        fields = '__all__'
