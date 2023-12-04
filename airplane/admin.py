@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from django.contrib import admin
-from .models import Airport, Flight, Passenger, Reservation
+from .models import Airport, Flight, Passenger
 
 
 # Register your models here.
@@ -21,6 +21,3 @@ class RoomAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Reservation)
-class ReservationAdmin(admin.ModelAdmin):
-    pass

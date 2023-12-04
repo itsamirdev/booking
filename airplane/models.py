@@ -12,12 +12,32 @@ class Airport(models.Model):
         return self.name
 
 
+class AirplaneStatus(models.TextChoices):
+    REFUELING = "REFUELING",
+    DELAYED = "DELAYED",
+    FLYING = "FLYING",
+    LANDING = "LANDING",
+
+
+class Airplane(models.Model):
+    name = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    manufacturer = models.CharField(max_length=100)
+    max_passengers = models.PositiveIntegerField()
+    status = models.CharField(max_length=9, choices=AirplaneStatus.choices)
+
+    def __str__(self):
+        return f'{self.name} | {self.model},{self.manufacturer}'
+
+
 class Flight(models.Model):
     flight_number = models.CharField(max_length=20, unique=True)
-    departure_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name='departures')
-    arrival_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name='arrivals')
+    airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE)
+    departure_airport = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name='departures')
+    arrival_airport = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name='arrivals')
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+    is_delete = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.flight_number} - {self.departure_airport} to {self.arrival_airport}"
@@ -47,7 +67,7 @@ class PaymentStatus(models.TextChoices):
     REFUNDED = "REFUNDED",
 
 
-class Reservation(models.Model):
+class TicketReservation(models.Model):
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE)
     seat_number = models.PositiveIntegerField()

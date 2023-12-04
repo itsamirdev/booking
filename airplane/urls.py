@@ -14,5 +14,5 @@ router.register('passengers', PassengerViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('flights/<int:pk>/reservations', ReservationView.as_view())
+    path('flight/<int:pk>/reservations', ReservationView.as_view())
 ]
