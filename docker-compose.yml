@@ -1,0 +1,11 @@
+#docker compose up -d
+services:
+  app:
+    build: .
+    command: sh -c "python manage.py migrate && gunicorn A.wsgi -b 0.0.0.0:8000"
+    container_name: app
+    volumes:
+      - .:/code/
+    expose:
+      - "8000"
+    restart: on-failure
